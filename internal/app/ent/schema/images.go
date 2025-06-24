@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -19,13 +20,24 @@ func (Images) Mixin() []ent.Mixin {
 // Fields of the Images.
 func (Images) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("entity_id"),
-		field.Bool("is_main").Default(false),
+		field.Int("media_type_id"),
+		field.Int("folder_id"),
+		field.String("uuid"),
+		field.String("name"),
 	}
 }
 
 // Edges of the Images.
 func (Images) Edges() []ent.Edge {
-	return nil
-
+	return []ent.Edge{
+		edge.From("folder", Folders.Type).
+			Ref("images").
+			Field("folder_id").
+			Unique(),
+		edge.From("media_type", MediaTypes.Type).
+			Ref("images").
+			Field("media_type_id").
+			Unique(),
+		edge.To("tags", Tags.Type),
+	}
 }

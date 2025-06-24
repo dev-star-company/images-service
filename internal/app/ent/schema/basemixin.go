@@ -2,7 +2,6 @@ package schema
 
 import (
 	"context"
-	"images-service/internal/app/ent/intercept"
 	"time"
 
 	"entgo.io/ent"
@@ -36,18 +35,18 @@ func SkipSoftDelete(parent context.Context) context.Context {
 }
 
 // Interceptors of the BaseMixin.
-func (d BaseMixin) Interceptors() []ent.Interceptor {
-	return []ent.Interceptor{
-		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
-			// Skip soft-delete, means include soft-deleted entities.
-			if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
-				return nil
-			}
-			d.P(q)
-			return nil
-		}),
-	}
-}
+// func (d BaseMixin) Interceptors() []ent.Interceptor {
+// 	return []ent.Interceptor{
+// 		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
+// 			// Skip soft-delete, means include soft-deleted entities.
+// 			if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+// 				return nil
+// 			}
+// 			d.P(q)
+// 			return nil
+// 		}),
+// 	}
+// }
 
 // func (m BaseMixin) EdgesMixin(schemaName string) []ent.Edge {
 // 	switch schemaName {

@@ -8,7 +8,11 @@ require (
 	google.golang.org/grpc v1.73.0
 )
 
-require github.com/lib/pq v1.10.9
+require (
+	github.com/dev-star-company/protos-go v0.0.0-20250623161933-74825452155b
+	github.com/dev-star-company/service-errors v0.0.0-20250623164759-b94c409aedcf
+	github.com/lib/pq v1.10.9
+)
 
 require (
 	ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83 // indirect
