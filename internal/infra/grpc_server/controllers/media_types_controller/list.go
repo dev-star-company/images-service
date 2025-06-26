@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"images-service/generated_protos/media_types_proto"
-	grpc_convertions "images-service/internal/adapters/grpc"
+	grpc_controllers "images-service/internal/adapters/grpc"
 	"images-service/internal/app/ent"
 	"images-service/internal/app/ent/media_types"
 	"images-service/internal/app/ent/schema"
@@ -62,7 +62,7 @@ func (c *controller) List(ctx context.Context, in *media_types_proto.ListRequest
 
 	responseMediaTypes := make([]*media_types_proto.MediaTypes, len(media_types))
 	for i, acc := range media_types {
-		responseMediaTypes[i] = grpc_convertions.MediaTypesToProto(acc)
+		responseMediaTypes[i] = grpc_controllers.MediaTypesToProto(acc)
 	}
 
 	if err := tx.Commit(); err != nil {

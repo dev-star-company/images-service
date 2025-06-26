@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/dev-star-company/protos-go v0.0.0-20250623161933-74825452155b
+	github.com/dev-star-company/protos-go v0.0.0-20250626123319-dfebb79acba5
 	github.com/dev-star-company/service-errors v0.0.0-20250623164759-b94c409aedcf
 	github.com/lib/pq v1.10.9
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"images-service/generated_protos/tags_proto"
-	grpc_convertions "images-service/internal/adapters/grpc"
+	grpc_controllers "images-service/internal/adapters/grpc"
 	"images-service/internal/app/ent"
 	"images-service/internal/app/ent/schema"
 	"images-service/internal/app/ent/tags"
@@ -62,7 +62,7 @@ func (c *controller) List(ctx context.Context, in *tags_proto.ListRequest) (*tag
 
 	responseTags := make([]*tags_proto.Tags, len(tags))
 	for i, acc := range tags {
-		responseTags[i] = grpc_convertions.TagsToProto(acc)
+		responseTags[i] = grpc_controllers.TagsToProto(acc)
 	}
 
 	if err := tx.Commit(); err != nil {

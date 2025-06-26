@@ -1,13 +1,15 @@
-package hosts_controller
+package host_urls_controller
 
 import (
 	"context"
+	"images-service/internal/app/ent/host_urls"
 	"images-service/internal/pkg/utils"
 
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/host_urls_proto"
 	"github.com/dev-star-company/service-errors/errs"
 )
 
-func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) (*hosts_proto.CreateResponse, error) {
+func (c *controller) Create(ctx context.Context, in *host_urls_proto.CreateRequest) (*host_urls_proto.CreateResponse, error) {
 
 	if in.RequesterId == 0 {
 		return nil, errs.RequesterIDRequired()
@@ -18,7 +20,7 @@ func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) 
 		return nil, errs.StartTransactionError(err)
 	}
 
-	create, err := c.Db.Hosts.Create().
+	create, err := c.Db.HostURLS.Create().
 		SetName(in.Name).
 		SetCreatedBy(int(in.RequesterId)).
 		SetUpdatedBy(int(in.RequesterId)).
@@ -32,8 +34,10 @@ func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) 
 		return nil, utils.Rollback(tx, errs.CommitTransactionError(err))
 	}
 
-	return &hosts_proto.CreateResponse{
+	return &host_urls_proto.CreateResponse{
 		RequesterId: uint32(create.CreatedBy),
-		Name:        string(*create.Name),
+		Default:     bool(host_urls.Default),
+		Url:         string(host_urls.Url),
+		Name:        string(*host_urls.Name),
 	}, nil
 }

@@ -1,19 +1,19 @@
-package hosts_controller
+package folders_controller
 
 import (
 	"context"
 	"errors"
-	"images-service/generated_protos/hosts_proto"
+	"images-service/generated_protos/folders_proto"
 	grpc_controllers "images-service/internal/adapters/grpc"
 	"images-service/internal/app/ent"
-	"images-service/internal/app/ent/hosts"
+	"images-service/internal/app/ent/folders"
 	"images-service/internal/app/ent/schema"
 	"images-service/internal/pkg/utils"
 
 	"github.com/dev-star-company/service-errors/errs"
 )
 
-func (c *controller) List(ctx context.Context, in *hosts_proto.ListRequest) (*hosts_proto.ListResponse, error) {
+func (c *controller) List(ctx context.Context, in *folders_proto.ListRequest) (*folders_proto.ListResponse, error) {
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
@@ -23,15 +23,15 @@ func (c *controller) List(ctx context.Context, in *hosts_proto.ListRequest) (*ho
 		ctx = schema.SkipSoftDelete(ctx)
 	}
 
-	query := tx.Hosts.Query()
+	query := tx.Folders.Query()
 
 	if in.Name != nil {
-		query = query.Where(hosts.Name(string(*in.Name)))
+		query = query.Where(folders.Name(string(*in.Name)))
 	}
 
 	count, err := query.Count(ctx)
 	if err != nil {
-		return nil, errs.ListingError("querying hosts", err)
+		return nil, errs.ListingError("querying folders", err)
 	}
 
 	if in.Limit != nil && *in.Limit > 0 {
@@ -46,31 +46,31 @@ func (c *controller) List(ctx context.Context, in *hosts_proto.ListRequest) (*ho
 		if in.Orderby.Id != nil {
 			switch *in.Orderby.Id {
 			case "ASC":
-				query = query.Order(ent.Asc(hosts.FieldID))
+				query = query.Order(ent.Asc(folders.FieldID))
 			case "DESC":
-				query = query.Order(ent.Desc(hosts.FieldID))
+				query = query.Order(ent.Desc(folders.FieldID))
 			default:
 				return nil, errs.InvalidOrderByValue(errors.New(*in.Orderby.Id))
 			}
 		}
 	}
 
-	hosts, err := query.All(ctx)
+	folders, err := query.All(ctx)
 	if err != nil {
-		return nil, errs.ListingError("querying hosts", err)
+		return nil, errs.ListingError("querying folders", err)
 	}
 
-	responseHosts := make([]*hosts_proto.Hosts, len(hosts))
-	for i, acc := range hosts {
-		responseHosts[i] = grpc_controllers.HostsToProto(acc)
+	responseFolders := make([]*folders_proto.Folders, len(folders))
+	for i, acc := range folders {
+		responseFolders[i] = grpc_controllers.FoldersToProto(acc)
 	}
 
 	if err := tx.Commit(); err != nil {
 		return nil, utils.Rollback(tx, errs.CommitTransactionError(err))
 	}
 
-	return &hosts_proto.ListResponse{
-		Rows:  responseHosts,
+	return &folders_proto.ListResponse{
+		Rows:  responseFolders,
 		Count: uint32(count),
 	}, nil
 }
