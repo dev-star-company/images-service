@@ -6,15 +6,14 @@ import (
 	"github.com/dev-star-company/protos-go/images_service/generated_protos/host_proto"
 )
 
-func HostsToProto(hosts *ent.Hosts) *host_proto.Hosts {
+func HostsToProto(hosts *ent.Hosts) *host_proto.Host {
 	if hosts == nil {
 		return nil
 	}
 
-	cur := &host_proto.Hosts{
+	cur := &host_proto.Host{
 		Id:        uint32(hosts.ID),
-		Name:      *hosts.Name,
-		Default:   bool(*hosts.Default),
+		Name:      hosts.Name,
 		CreatedBy: uint32(hosts.CreatedBy),
 		UpdatedBy: uint32(hosts.UpdatedBy),
 		CreatedAt: hosts.CreatedAt.Format("2006-01-02 15:04:05"),

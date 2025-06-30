@@ -13,7 +13,7 @@ func MediaTypesToProto(media_types *ent.MediaTypes) *media_types_proto.MediaType
 
 	cur := &media_types_proto.MediaTypes{
 		Id:        uint32(media_types.ID),
-		Name:      *media_types.Name,
+		Name:      media_types.Name,
 		CreatedBy: uint32(media_types.CreatedBy),
 		UpdatedBy: uint32(media_types.UpdatedBy),
 		CreatedAt: media_types.CreatedAt.Format("2006-01-02 15:04:05"),

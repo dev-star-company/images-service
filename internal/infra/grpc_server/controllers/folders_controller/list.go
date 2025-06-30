@@ -3,13 +3,13 @@ package folders_controller
 import (
 	"context"
 	"errors"
-	"images-service/generated_protos/folders_proto"
-	grpc_controllers "images-service/internal/adapters/grpc"
+	"images-service/internal/adapters/grpc_controllers"
 	"images-service/internal/app/ent"
 	"images-service/internal/app/ent/folders"
 	"images-service/internal/app/ent/schema"
 	"images-service/internal/pkg/utils"
 
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/folders_proto"
 	"github.com/dev-star-company/service-errors/errs"
 )
 
@@ -25,8 +25,8 @@ func (c *controller) List(ctx context.Context, in *folders_proto.ListRequest) (*
 
 	query := tx.Folders.Query()
 
-	if in.Name != nil {
-		query = query.Where(folders.Name(string(*in.Name)))
+	if in.Name != "" {
+		query = query.Where(folders.Name(string(in.Name)))
 	}
 
 	count, err := query.Count(ctx)

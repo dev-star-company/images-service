@@ -2,37 +2,37 @@ package folders_controller
 
 import (
 	"context"
-	"images-service/generated_protos/folders_proto"
 	"images-service/internal/app/ent"
+	"images-service/internal/infra/grpc_server/controllers"
 	"images-service/internal/pkg/utils"
+
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/folders_proto"
 
 	"github.com/dev-star-company/service-errors/errs"
 )
 
 func (c *controller) Update(ctx context.Context, in *folders_proto.UpdateRequest) (*folders_proto.UpdateResponse, error) {
-	if in.RequesterId == 0 {
-		return nil, errs.ProductsNotFound(int(in.Id))
+	if in.RequesterUuid == "" {
+		return nil, errs.FoldersNotFound(int(in.Id))
 	}
 
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
 	}
-
-	var folders *ent.Folders
+	requester, err := controllers.GetUserFromUuid(tx, ctx, in.RequesterUuid)
+	if err != nil {
+		return nil, err
+	}
 
 	foldersQ := tx.Folders.UpdateOneID(int(in.Id))
 
-	if in.Name != nil && *in.Name != "" {
-		foldersQ.SetName(string(*in.Name))
-	}
+	foldersQ.SetUpdatedBy(requester.ID)
 
-	foldersQ.SetUpdatedBy(int(in.RequesterId))
-
-	folders, err = foldersQ.Save(ctx)
+	_, err = foldersQ.Save(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, utils.Rollback(tx, errs.ProductsNotFound(int(in.Id)))
+			return nil, utils.Rollback(tx, errs.FoldersNotFound(int(in.Id)))
 		}
 		if ent.IsConstraintError(err) {
 			return nil, utils.Rollback(tx, errs.InvalidForeignKey(err))
@@ -45,8 +45,6 @@ func (c *controller) Update(ctx context.Context, in *folders_proto.UpdateRequest
 	}
 
 	return &folders_proto.UpdateResponse{
-		RequesterId: uint32(folders.CreatedBy),
-		FolderId:    uint32(folders.FolderId),
-		Name:        string(*folders.Name),
+		RequesterUuid: in.RequesterUuid,
 	}, nil
 }

@@ -13,10 +13,10 @@ func ImagesToProto(hosts *ent.Images) *images_proto.Images {
 
 	cur := &images_proto.Images{
 		Id:          uint32(hosts.ID),
-		Name:        *hosts.Name,
-		Uuid:        *hosts.Uuid,
-		FolderId:    uint32(*hosts.FolderId),
-		MediaTypeId: uint32(*hosts.MediaTypeId),
+		Name:        hosts.Name,
+		Uuid:        hosts.UUID,
+		FolderId:    uint32(*hosts.FolderID),
+		MediaTypeId: uint32(*hosts.MediaTypeID),
 		CreatedBy:   uint32(hosts.CreatedBy),
 		UpdatedBy:   uint32(hosts.UpdatedBy),
 		CreatedAt:   hosts.CreatedAt.Format("2006-01-02 15:04:05"),

@@ -20,8 +20,9 @@ func (Folders) Mixin() []ent.Mixin {
 // Fields of the Folders.
 func (Folders) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("folder_id").Optional().Nillable(),
 		field.String("name").NotEmpty(),
+		field.Uint32("folder_id").Nillable(),
+		field.Uint32("host_urls_id").Nillable(),
 	}
 }
 
@@ -31,7 +32,6 @@ func (Folders) Edges() []ent.Edge {
 		edge.To("images", Images.Type),
 		edge.To("children", Folders.Type).
 			From("parent").
-			Unique().
-			Field("folder_id"),
+			Unique(),
 	}
 }

@@ -4,21 +4,21 @@ import (
 	"context"
 	"images-service/internal/app/ent"
 
-	"github.com/dev-star-company/protos-go/images_service/generated_protos"
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/host_proto"
 )
 
 type Controller interface {
-	hosts_proto.HostsServiceServer
+	host_proto.HostServiceServer
 
-	Create(ctx context.Context, in *hosts_proto.CreateRequest) (*hosts_proto.CreateResponse, error)
-	Get(ctx context.Context, in *hosts_proto.GetRequest) (*hosts_proto.GetResponse, error)
-	Update(ctx context.Context, in *hosts_proto.UpdateRequest) (*hosts_proto.UpdateResponse, error)
-	Delete(ctx context.Context, in *hosts_proto.DeleteRequest) (*hosts_proto.DeleteResponse, error)
-	List(ctx context.Context, in *hosts_proto.ListRequest) (*hosts_proto.ListResponse, error)
+	Create(ctx context.Context, in *host_proto.CreateRequest) (*host_proto.CreateResponse, error)
+	Get(ctx context.Context, in *host_proto.GetRequest) (*host_proto.GetResponse, error)
+	Update(ctx context.Context, in *host_proto.UpdateRequest) (*host_proto.UpdateResponse, error)
+	Delete(ctx context.Context, in *host_proto.DeleteRequest) (*host_proto.DeleteResponse, error)
+	List(ctx context.Context, in *host_proto.ListRequest) (*host_proto.ListResponse, error)
 }
 
 type controller struct {
-	hosts_proto.UnimplementedHostsServiceServer
+	host_proto.UnimplementedHostServiceServer
 
 	Db *ent.Client
 }

@@ -12,13 +12,14 @@ func FoldersToProto(folders *ent.Folders) *folders_proto.Folders {
 	}
 
 	cur := &folders_proto.Folders{
-		Id:        uint32(folders.ID),
-		Name:      *folders.Name,
-		FolderId:  uint32(*folders.FolderId),
-		CreatedBy: uint32(folders.CreatedBy),
-		UpdatedBy: uint32(folders.UpdatedBy),
-		CreatedAt: folders.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt: folders.UpdatedAt.Format("2006-01-02 15:04:05"),
+		Id:         uint32(folders.ID),
+		Name:       folders.Name,
+		FolderId:   uint32(*folders.FolderID),
+		HostUrlsId: uint32(*folders.HostUrlsID),
+		CreatedBy:  uint32(folders.CreatedBy),
+		UpdatedBy:  uint32(folders.UpdatedBy),
+		CreatedAt:  folders.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:  folders.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
 	if folders.DeletedAt != nil {

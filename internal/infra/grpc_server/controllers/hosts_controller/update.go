@@ -2,14 +2,15 @@ package hosts_controller
 
 import (
 	"context"
-	"images-service/generated_protos/hosts_proto"
 	"images-service/internal/app/ent"
 	"images-service/internal/pkg/utils"
+
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/host_proto"
 
 	"github.com/dev-star-company/service-errors/errs"
 )
 
-func (c *controller) Update(ctx context.Context, in *hosts_proto.UpdateRequest) (*hosts_proto.UpdateResponse, error) {
+func (c *controller) Update(ctx context.Context, in *host_proto.UpdateRequest) (*host_proto.UpdateResponse, error) {
 	if in.RequesterId == 0 {
 		return nil, errs.ProductsNotFound(int(in.Id))
 	}
@@ -19,17 +20,17 @@ func (c *controller) Update(ctx context.Context, in *hosts_proto.UpdateRequest) 
 		return nil, errs.StartTransactionError(err)
 	}
 
-	var hosts *ent.Hosts
+	var host *ent.Hosts
 
-	hostsQ := tx.Hosts.UpdateOneID(int(in.Id))
+	hostQ := tx.Hosts.UpdateOneID(int(in.Id))
 
 	if in.Name != nil && *in.Name != "" {
-		hostsQ.SetName(string(*in.Name))
+		hostQ.SetName(string(*in.Name))
 	}
 
-	hostsQ.SetUpdatedBy(int(in.RequesterId))
+	hostQ.SetUpdatedBy(int(in.RequesterId))
 
-	hosts, err = hostsQ.Save(ctx)
+	host, err = hostQ.Save(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, utils.Rollback(tx, errs.ProductsNotFound(int(in.Id)))
@@ -37,15 +38,15 @@ func (c *controller) Update(ctx context.Context, in *hosts_proto.UpdateRequest) 
 		if ent.IsConstraintError(err) {
 			return nil, utils.Rollback(tx, errs.InvalidForeignKey(err))
 		}
-		return nil, errs.SavingError("hosts", err)
+		return nil, errs.SavingError("host", err)
 	}
 
 	if err := tx.Commit(); err != nil {
 		return nil, utils.Rollback(tx, errs.CommitTransactionError(err))
 	}
 
-	return &hosts_proto.UpdateResponse{
-		RequesterId: uint32(hosts.CreatedBy),
-		Name:        string(*hosts.Name),
+	return &host_proto.UpdateResponse{
+		RequesterId: uint32(host.CreatedBy),
+		Name:        string(*host.Name),
 	}, nil
 }

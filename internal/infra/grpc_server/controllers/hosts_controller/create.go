@@ -2,14 +2,17 @@ package hosts_controller
 
 import (
 	"context"
+	"images-service/internal/infra/grpc_server/controllers"
 	"images-service/internal/pkg/utils"
+
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/hosts_proto"
 
 	"github.com/dev-star-company/service-errors/errs"
 )
 
 func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) (*hosts_proto.CreateResponse, error) {
 
-	if in.RequesterId == 0 {
+	if in.RequesterUuid == "" {
 		return nil, errs.RequesterIDRequired()
 	}
 
@@ -18,14 +21,20 @@ func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) 
 		return nil, errs.StartTransactionError(err)
 	}
 
-	create, err := c.Db.Hosts.Create().
-		SetName(in.Name).
-		SetCreatedBy(int(in.RequesterId)).
-		SetUpdatedBy(int(in.RequesterId)).
+	defer tx.Rollback()
+
+	requester, err := controllers.GetUserFromUuid(tx, ctx, in.RequesterUuid)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.Db.Hosts.Create().
+		SetCreatedBy(requester.ID).
+		SetUpdatedBy(requester.ID).
 		Save(ctx)
 
 	if err != nil {
-		return nil, errs.CreateError("product type", err)
+		return nil, errs.CreateError("hosts", err)
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -33,7 +42,7 @@ func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) 
 	}
 
 	return &hosts_proto.CreateResponse{
-		RequesterId: uint32(create.CreatedBy),
-		Name:        string(*create.Name),
+		RequesterUuid: in.RequesterUuid,
+		FolderId:      uint32(*&in.FolderId),
 	}, nil
 }

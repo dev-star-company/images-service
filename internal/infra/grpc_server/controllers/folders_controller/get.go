@@ -20,8 +20,7 @@ func (c *controller) Get(ctx context.Context, in *folders_proto.GetRequest) (*fo
 	}
 
 	return &folders_proto.GetResponse{
-		RequesterId: uint32(folders.CreatedBy),
-		FolderId:    uint32(folders.FolderId),
-		Name:        string(*folders.Name),
+		FolderId: uint32(*folders.FolderID),
+		Name:     string(folders.Name),
 	}, nil
 }

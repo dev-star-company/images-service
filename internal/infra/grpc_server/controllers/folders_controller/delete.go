@@ -2,16 +2,17 @@ package folders_controller
 
 import (
 	"context"
-
+	"images-service/internal/infra/grpc_server/controllers"
 	"images-service/internal/pkg/utils"
 	"time"
 
 	"github.com/dev-star-company/protos-go/images_service/generated_protos/folders_proto"
+
 	"github.com/dev-star-company/service-errors/errs"
 )
 
 func (c *controller) Delete(ctx context.Context, in *folders_proto.DeleteRequest) (*folders_proto.DeleteResponse, error) {
-	if in.RequesterId == 0 {
+	if in.RequesterUuid == "" {
 		return nil, errs.FoldersNotFound(int(in.Id))
 	}
 
@@ -20,9 +21,14 @@ func (c *controller) Delete(ctx context.Context, in *folders_proto.DeleteRequest
 		return nil, errs.StartTransactionError(err)
 	}
 
+	requester, err := controllers.GetUserFromUuid(tx, ctx, in.RequesterUuid)
+	if err != nil {
+		return nil, err
+	}
+
 	err = tx.Folders.UpdateOneID(int(in.Id)).
 		SetDeletedAt(time.Now()).
-		SetDeletedBy(int(in.RequesterId)).
+		SetDeletedBy(requester.ID).
 		Exec(ctx)
 
 	if err != nil {

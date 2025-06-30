@@ -20,8 +20,8 @@ func (Images) Mixin() []ent.Mixin {
 // Fields of the Images.
 func (Images) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("media_type_id"),
-		field.Int("folder_id"),
+		field.Int("media_type_id").Nillable().Optional(),
+		field.Int("folder_id").Nillable().Optional(),
 		field.String("uuid"),
 		field.String("name"),
 	}

@@ -13,7 +13,7 @@ func TagsToProto(tags *ent.Tags) *tags_proto.Tags {
 
 	cur := &tags_proto.Tags{
 		Id:        uint32(tags.ID),
-		Name:      *tags.Name,
+		Name:      tags.Name,
 		CreatedBy: uint32(tags.CreatedBy),
 		UpdatedBy: uint32(tags.UpdatedBy),
 		CreatedAt: tags.CreatedAt.Format("2006-01-02 15:04:05"),
