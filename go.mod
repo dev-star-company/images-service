@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/dev-star-company/protos-go v0.0.0-20250628144425-cc04011d2772
+	github.com/dev-star-company/protos-go v0.0.0-20250722171055-0d793ef6023c
 	github.com/dev-star-company/service-errors v0.0.0-20250623164759-b94c409aedcf
 	github.com/lib/pq v1.10.9
 )
@@ -28,9 +28,9 @@ require (
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
 	golang.org/x/mod v0.25.0 // indirect
-	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
+	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250715232539-7130f93afb79 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )

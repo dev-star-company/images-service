@@ -17,20 +17,12 @@ func ImagesToProto(hosts *ent.Images) *images_proto.Images {
 		Uuid:        hosts.UUID,
 		FolderId:    uint32(*hosts.FolderID),
 		MediaTypeId: uint32(*hosts.MediaTypeID),
-		CreatedBy:   uint32(hosts.CreatedBy),
-		UpdatedBy:   uint32(hosts.UpdatedBy),
 		CreatedAt:   hosts.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:   hosts.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
 	if hosts.DeletedAt != nil {
 		x := hosts.DeletedAt.Format("2006-01-02 15:04:05")
 		cur.DeletedAt = &x
-	}
-
-	if hosts.DeletedBy != nil {
-		x := uint32(*hosts.DeletedBy)
-		cur.DeletedBy = &x
 	}
 
 	return cur

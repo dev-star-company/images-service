@@ -16,20 +16,12 @@ func HostURLSToProto(host_urls *ent.HostURLS) *host_urls_proto.HostURLs {
 		Name:      host_urls.Name,
 		Url:       host_urls.URL,
 		Default:   bool(host_urls.Default),
-		CreatedBy: uint32(host_urls.CreatedBy),
-		UpdatedBy: uint32(host_urls.UpdatedBy),
 		CreatedAt: host_urls.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt: host_urls.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
 	if host_urls.DeletedAt != nil {
 		x := host_urls.DeletedAt.Format("2006-01-02 15:04:05")
 		cur.DeletedAt = &x
-	}
-
-	if host_urls.DeletedBy != nil {
-		x := uint32(*host_urls.DeletedBy)
-		cur.DeletedBy = &x
 	}
 
 	return cur
