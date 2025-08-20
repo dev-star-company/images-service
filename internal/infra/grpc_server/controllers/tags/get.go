@@ -2,7 +2,7 @@ package tags_controller
 
 import (
 	"context"
-	"images-service/generated_protos/tags_proto"
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/tags_proto"
 	"images-service/internal/app/ent"
 	"images-service/internal/app/ent/tags"
 
@@ -20,7 +20,6 @@ func (c *controller) Get(ctx context.Context, in *tags_proto.GetRequest) (*tags_
 	}
 
 	return &tags_proto.GetResponse{
-		RequesterId: uint32(tags.CreatedBy),
-		Name:        *tags.Name,
+		Name:        tags.Name,
 	}, nil
 }

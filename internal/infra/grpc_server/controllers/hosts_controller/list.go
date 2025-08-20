@@ -5,7 +5,7 @@ import (
 	"errors"
 	"images-service/internal/adapters/grpc_controllers"
 	"images-service/internal/app/ent"
-	"images-service/internal/app/ent/host"
+	"images-service/internal/app/ent/hosts"
 	"images-service/internal/app/ent/schema"
 	"images-service/internal/pkg/utils"
 
@@ -27,7 +27,7 @@ func (c *controller) List(ctx context.Context, in *host_proto.ListRequest) (*hos
 	query := tx.Hosts.Query()
 
 	if in.Name != nil {
-		query = query.Where(host.Name(string(*in.Name)))
+		query = query.Where(hosts.Name(string(*in.Name)))
 	}
 
 	count, err := query.Count(ctx)
@@ -47,9 +47,9 @@ func (c *controller) List(ctx context.Context, in *host_proto.ListRequest) (*hos
 		if in.Orderby.Id != nil {
 			switch *in.Orderby.Id {
 			case "ASC":
-				query = query.Order(ent.Asc(host.FieldID))
+				query = query.Order(ent.Asc(hosts.FieldID))
 			case "DESC":
-				query = query.Order(ent.Desc(host.FieldID))
+				query = query.Order(ent.Desc(hosts.FieldID))
 			default:
 				return nil, errs.InvalidOrderByValue(errors.New(*in.Orderby.Id))
 			}
@@ -61,7 +61,7 @@ func (c *controller) List(ctx context.Context, in *host_proto.ListRequest) (*hos
 		return nil, errs.ListingError("querying host", err)
 	}
 
-	responseHosts := make([]*host_proto.Hosts, len(host))
+	responseHosts := make([]*host_proto.Host, len(host))
 	for i, acc := range host {
 		responseHosts[i] = grpc_controllers.HostsToProto(acc)
 	}

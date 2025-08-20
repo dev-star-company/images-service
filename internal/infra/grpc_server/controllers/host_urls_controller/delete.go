@@ -2,7 +2,6 @@ package host_urls_controller
 
 import (
 	"context"
-	"images-service/internal/infra/grpc_server/controllers"
 	"images-service/internal/pkg/utils"
 	"time"
 
@@ -12,23 +11,14 @@ import (
 )
 
 func (c *controller) Delete(ctx context.Context, in *host_urls_proto.DeleteRequest) (*host_urls_proto.DeleteResponse, error) {
-	if in.RequesterUuid == "" {
-		return nil, errs.HostURLSNotFound(int(in.Id))
-	}
 
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
 	}
 
-	requester, err := controllers.GetUserFromUuid(tx, ctx, in.RequesterUuid)
-	if err != nil {
-		return nil, err
-	}
-
 	err = tx.HostURLS.UpdateOneID(int(in.Id)).
 		SetDeletedAt(time.Now()).
-		SetDeletedBy(requester.ID).
 		Exec(ctx)
 
 	if err != nil {

@@ -19,11 +19,7 @@ type BaseMixin struct {
 func (BaseMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("created_at").Default(time.Now).Immutable(),
-		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 		field.Time("deleted_at").Optional().Nillable(),
-		field.Int("created_by").Positive().Immutable(),
-		field.Int("updated_by").Positive(),
-		field.Int("deleted_by").Optional().Nillable(),
 	}
 }
 

@@ -16,20 +16,12 @@ func FoldersToProto(folders *ent.Folders) *folders_proto.Folders {
 		Name:       folders.Name,
 		FolderId:   uint32(*folders.FolderID),
 		HostUrlsId: uint32(*folders.HostUrlsID),
-		CreatedBy:  uint32(folders.CreatedBy),
-		UpdatedBy:  uint32(folders.UpdatedBy),
 		CreatedAt:  folders.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:  folders.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
 	if folders.DeletedAt != nil {
 		x := folders.DeletedAt.Format("2006-01-02 15:04:05")
 		cur.DeletedAt = &x
-	}
-
-	if folders.DeletedBy != nil {
-		x := uint32(*folders.DeletedBy)
-		cur.DeletedBy = &x
 	}
 
 	return cur

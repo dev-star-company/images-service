@@ -2,8 +2,9 @@ package tags_controller
 
 import (
 	"context"
-	"images-service/generated_protos/tags_proto"
 	"images-service/internal/app/ent"
+
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/tags_proto"
 )
 
 type Controller interface {

@@ -2,19 +2,14 @@ package hosts_controller
 
 import (
 	"context"
-	"images-service/internal/infra/grpc_server/controllers"
 	"images-service/internal/pkg/utils"
 
-	"github.com/dev-star-company/protos-go/images_service/generated_protos/hosts_proto"
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/host_proto"
 
 	"github.com/dev-star-company/service-errors/errs"
 )
 
-func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) (*hosts_proto.CreateResponse, error) {
-
-	if in.RequesterUuid == "" {
-		return nil, errs.RequesterIDRequired()
-	}
+func (c *controller) Create(ctx context.Context, in *host_proto.CreateRequest) (*host_proto.CreateResponse, error) {
 
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
@@ -23,14 +18,8 @@ func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) 
 
 	defer tx.Rollback()
 
-	requester, err := controllers.GetUserFromUuid(tx, ctx, in.RequesterUuid)
-	if err != nil {
-		return nil, err
-	}
-
 	_, err = c.Db.Hosts.Create().
-		SetCreatedBy(requester.ID).
-		SetUpdatedBy(requester.ID).
+		SetName(in.Name).
 		Save(ctx)
 
 	if err != nil {
@@ -41,8 +30,7 @@ func (c *controller) Create(ctx context.Context, in *hosts_proto.CreateRequest) 
 		return nil, utils.Rollback(tx, errs.CommitTransactionError(err))
 	}
 
-	return &hosts_proto.CreateResponse{
-		RequesterUuid: in.RequesterUuid,
-		FolderId:      uint32(*&in.FolderId),
+	return &host_proto.CreateResponse{
+		Name:      in.Name,
 	}, nil
 }

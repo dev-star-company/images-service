@@ -3,12 +3,13 @@ package media_types_controller
 import (
 	"context"
 	"errors"
-	"images-service/generated_protos/media_types_proto"
-	grpc_controllers "images-service/internal/adapters/grpc"
+	"images-service/internal/adapters/grpc_controllers"
 	"images-service/internal/app/ent"
-	"images-service/internal/app/ent/media_types"
+	"images-service/internal/app/ent/mediatypes"
 	"images-service/internal/app/ent/schema"
 	"images-service/internal/pkg/utils"
+
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/media_types_proto"
 
 	"github.com/dev-star-company/service-errors/errs"
 )
@@ -26,7 +27,7 @@ func (c *controller) List(ctx context.Context, in *media_types_proto.ListRequest
 	query := tx.MediaTypes.Query()
 
 	if in.Name != nil {
-		query = query.Where(media_types.Name(string(*in.Name)))
+		query = query.Where(mediatypes.Name(string(*in.Name)))
 	}
 
 	count, err := query.Count(ctx)
@@ -46,9 +47,9 @@ func (c *controller) List(ctx context.Context, in *media_types_proto.ListRequest
 		if in.Orderby.Id != nil {
 			switch *in.Orderby.Id {
 			case "ASC":
-				query = query.Order(ent.Asc(media_types.FieldID))
+				query = query.Order(ent.Asc(mediatypes.FieldID))
 			case "DESC":
-				query = query.Order(ent.Desc(media_types.FieldID))
+				query = query.Order(ent.Desc(mediatypes.FieldID))
 			default:
 				return nil, errs.InvalidOrderByValue(errors.New(*in.Orderby.Id))
 			}

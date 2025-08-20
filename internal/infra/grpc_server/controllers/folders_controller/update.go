@@ -3,7 +3,6 @@ package folders_controller
 import (
 	"context"
 	"images-service/internal/app/ent"
-	"images-service/internal/infra/grpc_server/controllers"
 	"images-service/internal/pkg/utils"
 
 	"github.com/dev-star-company/protos-go/images_service/generated_protos/folders_proto"
@@ -12,22 +11,12 @@ import (
 )
 
 func (c *controller) Update(ctx context.Context, in *folders_proto.UpdateRequest) (*folders_proto.UpdateResponse, error) {
-	if in.RequesterUuid == "" {
-		return nil, errs.FoldersNotFound(int(in.Id))
-	}
-
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
 	}
-	requester, err := controllers.GetUserFromUuid(tx, ctx, in.RequesterUuid)
-	if err != nil {
-		return nil, err
-	}
 
 	foldersQ := tx.Folders.UpdateOneID(int(in.Id))
-
-	foldersQ.SetUpdatedBy(requester.ID)
 
 	_, err = foldersQ.Save(ctx)
 	if err != nil {
@@ -44,7 +33,5 @@ func (c *controller) Update(ctx context.Context, in *folders_proto.UpdateRequest
 		return nil, utils.Rollback(tx, errs.CommitTransactionError(err))
 	}
 
-	return &folders_proto.UpdateResponse{
-		RequesterUuid: in.RequesterUuid,
-	}, nil
+	return &folders_proto.UpdateResponse{}, nil
 }

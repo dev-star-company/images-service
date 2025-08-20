@@ -11,10 +11,6 @@ import (
 )
 
 func (c *controller) Delete(ctx context.Context, in *images_proto.DeleteRequest) (*images_proto.DeleteResponse, error) {
-	if in.RequesterId == 0 {
-		return nil, errs.ImagesNotFound(int(in.Id))
-	}
-
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
@@ -22,7 +18,6 @@ func (c *controller) Delete(ctx context.Context, in *images_proto.DeleteRequest)
 
 	err = tx.Images.UpdateOneID(int(in.Id)).
 		SetDeletedAt(time.Now()).
-		SetDeletedBy(int(in.RequesterId)).
 		Exec(ctx)
 
 	if err != nil {

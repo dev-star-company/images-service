@@ -20,10 +20,8 @@ func (c *controller) Get(ctx context.Context, in *images_proto.GetRequest) (*ima
 	}
 
 	return &images_proto.GetResponse{
-		RequesterId: uint32(images.CreatedBy),
-		Name:        string(*images.Name),
-		Uuid:        string(*images.Uuid),
-		FolderId:    uint32(images.FolderId),
-		MediaTypeId: uint32(images.MediaTypeId),
+		Name:        images.Name,
+		FolderId:    uint32(*images.FolderID),
+		MediaTypeId: uint32(*images.MediaTypeID),
 	}, nil
 }

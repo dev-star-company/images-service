@@ -11,9 +11,6 @@ import (
 )
 
 func (c *controller) Update(ctx context.Context, in *host_proto.UpdateRequest) (*host_proto.UpdateResponse, error) {
-	if in.RequesterId == 0 {
-		return nil, errs.ProductsNotFound(int(in.Id))
-	}
 
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
@@ -27,8 +24,6 @@ func (c *controller) Update(ctx context.Context, in *host_proto.UpdateRequest) (
 	if in.Name != nil && *in.Name != "" {
 		hostQ.SetName(string(*in.Name))
 	}
-
-	hostQ.SetUpdatedBy(int(in.RequesterId))
 
 	host, err = hostQ.Save(ctx)
 	if err != nil {
@@ -46,7 +41,7 @@ func (c *controller) Update(ctx context.Context, in *host_proto.UpdateRequest) (
 	}
 
 	return &host_proto.UpdateResponse{
-		RequesterId: uint32(host.CreatedBy),
-		Name:        string(*host.Name),
+		Name: host.Name,
 	}, nil
+
 }

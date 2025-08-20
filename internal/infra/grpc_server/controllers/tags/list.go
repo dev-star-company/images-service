@@ -3,12 +3,13 @@ package tags_controller
 import (
 	"context"
 	"errors"
-	"images-service/generated_protos/tags_proto"
-	grpc_controllers "images-service/internal/adapters/grpc"
+	"images-service/internal/adapters/grpc_controllers"
 	"images-service/internal/app/ent"
 	"images-service/internal/app/ent/schema"
 	"images-service/internal/app/ent/tags"
 	"images-service/internal/pkg/utils"
+
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/tags_proto"
 
 	"github.com/dev-star-company/service-errors/errs"
 )

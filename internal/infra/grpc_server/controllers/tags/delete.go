@@ -2,7 +2,7 @@ package tags_controller
 
 import (
 	"context"
-	"images-service/generated_protos/tags_proto"
+	"github.com/dev-star-company/protos-go/images_service/generated_protos/tags_proto"
 	"images-service/internal/pkg/utils"
 	"time"
 
@@ -10,10 +10,6 @@ import (
 )
 
 func (c *controller) Delete(ctx context.Context, in *tags_proto.DeleteRequest) (*tags_proto.DeleteResponse, error) {
-	if in.RequesterId == 0 {
-		return nil, errs.TagsNotFound(int(in.Id))
-	}
-
 	tx, err := c.Db.Tx(ctx)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
@@ -21,7 +17,6 @@ func (c *controller) Delete(ctx context.Context, in *tags_proto.DeleteRequest) (
 
 	err = tx.Tags.UpdateOneID(int(in.Id)).
 		SetDeletedAt(time.Now()).
-		SetDeletedBy(int(in.RequesterId)).
 		Exec(ctx)
 
 	if err != nil {
