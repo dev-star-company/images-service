@@ -11,7 +11,6 @@ require (
 require (
 	github.com/dev-star-company/protos-go v0.0.0-20250822130115-466da2f64757
 	github.com/dev-star-company/service-errors v0.0.0-20250718142618-8a881d213466
-	github.com/lib/pq v1.10.9
 )
 
 require (
