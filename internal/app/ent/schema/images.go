@@ -22,8 +22,11 @@ func (Images) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("media_type_id").Nillable().Optional(),
 		field.Int("folder_id").Nillable().Optional(),
-		field.String("uuid"),
 		field.String("name"),
+		field.String("cloudflare_id").Optional(),
+		field.String("url").Optional(),
+		field.Int64("size").Optional(),
+		field.String("content_type").Optional(),
 	}
 }
 

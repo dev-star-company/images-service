@@ -3,6 +3,8 @@ package images_controller
 import (
 	"context"
 	"images-service/internal/app/ent"
+	"images-service/internal/config"
+	"images-service/internal/pkg/cloudflare"
 
 	"github.com/dev-star-company/protos-go/images_service/generated_protos/images_proto"
 )
@@ -18,13 +20,14 @@ type Controller interface {
 }
 
 type controller struct {
+	Db               *ent.Client
+	CloudflareClient *cloudflare.ImagesClient
 	images_proto.UnimplementedImagesServiceServer
-
-	Db *ent.Client
 }
 
-func New(Db *ent.Client) Controller {
+func New(db *ent.Client, cfg *config.CloudflareConfig) *controller {
 	return &controller{
-		Db: Db,
+		Db:               db,
+		CloudflareClient: cloudflare.NewImagesClient(cfg),
 	}
 }

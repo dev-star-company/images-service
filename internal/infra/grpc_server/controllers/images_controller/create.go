@@ -13,21 +13,44 @@ func (c *controller) Create(ctx context.Context, in *images_proto.CreateRequest)
 	if err != nil {
 		return nil, errs.StartTransactionError(err)
 	}
-	defer tx.Rollback()
 
-	_, err = c.Db.Images.Create().
+	// Upload para Cloudflare Images
+	metadata := map[string]string{
+		"name":      in.Name,
+		"folder_id": string(rune(in.FolderId)),
+	}
+
+	uploadResp, err := c.CloudflareClient.UploadImage(ctx, in.ImageData, in.Name, metadata)
+	if err != nil {
+		return nil, utils.Rollback(tx, errs.CreateError("cloudflare_upload", err))
+	}
+
+	// Gerar URL pública
+	publicURL := c.CloudflareClient.GetImageURL(uploadResp.Result.ID, "public")
+
+	// Salvar no banco
+	image, err := tx.Images.Create().
 		SetName(in.Name).
-		SetMediaTypeID(int(in.MediaTypeId)).
+		SetCloudflareID(uploadResp.Result.ID).
+		SetURL(publicURL).
+		SetSize(int64(len(in.ImageData))).
+		SetContentType(in.ContentType).
 		SetFolderID(int(in.FolderId)).
 		Save(ctx)
 
 	if err != nil {
-		return nil, errs.CreateError("product type", err)
+		// Se falhar ao salvar no banco, deletar da Cloudflare
+		c.CloudflareClient.DeleteImage(ctx, uploadResp.Result.ID)
+		return nil, utils.Rollback(tx, errs.CreateError("images", err))
 	}
 
 	if err := tx.Commit(); err != nil {
 		return nil, utils.Rollback(tx, errs.CommitTransactionError(err))
 	}
 
-	return &images_proto.CreateResponse{}, nil
+	return &images_proto.CreateResponse{
+		Id:           uint32(image.ID),
+		CloudflareId: uploadResp.Result.ID,
+		Url:          publicURL,
+	}, nil
 }
